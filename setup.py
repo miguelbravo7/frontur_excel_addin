@@ -13,12 +13,10 @@ setup(
     description="Trabajo de fin de grado",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.0.5",
+    version="0.0.6",
     packages=find_namespace_packages(),
     include_package_data=True,
 
-    # Project uses reStructuredText, so ensure that the docutils get
-    # installed or upgraded on the target machine
     install_requires=['docutils'] + requirements,
 
     keywords="TFG ULL ISTAC",
