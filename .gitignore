@@ -1,6 +1,8 @@
 env
 .vscode
 
+__pycache__
+
 # Distribution files
 dist
 build
