@@ -4,7 +4,7 @@ import datetime
 import xlwings as xw
 import pandas as pd
 import frontur_utilities as df
-import utility_functions as uf
+import frontur_addin_functions.utility_functions as uf
 
 
 @xw.func

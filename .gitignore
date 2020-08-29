@@ -1,2 +1,7 @@
 env
 .vscode
+
+# Distribution files
+dist
+build
+*.egg-info
