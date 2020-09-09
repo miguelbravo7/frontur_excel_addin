@@ -5,6 +5,7 @@ import xlwings as xw
 import pandas as pd
 import frontur_utilities as df
 import frontur_excel_addin.utility_functions as uf
+from frontur_utilities.solver_df import df_solver
 
 
 @xw.func
@@ -136,3 +137,26 @@ def assemble_cells(*cell_matrix):
     cell_matrix = df.utility.flatten(cell_matrix)
     data_frame = pd.DataFrame(cell_matrix[1:], columns=cell_matrix[0])
     return data_frame
+
+
+@xw.func(async_mode='threading')
+@xw.arg('data_frame', pd.DataFrame, header=True, index=False, dates=datetime.datetime)
+@xw.ret(index=False, expand='table')
+def solver(data_frame):
+    data_frame = uf.decode_dataframe(data_frame) 
+    with open(const.REQ_INTERVIEWS_FILE_PATH) as jfile:
+        data = json.load(jfile)
+    data_frame = df_solver(data_frame, no_groups=True, parameters={
+        'workday_time': pd.Timedelta(hours=8).seconds,
+        'rest_time': pd.Timedelta(minutes=10).seconds,
+        'execution_time_limit': pd.Timedelta(minutes=15).seconds,
+        'country_kwargs': {
+            'plane_kwargs': {
+                'seats_used': 0.8,
+                'poll_success': 0.6,
+                'poll_time': pd.Timedelta(seconds=30).seconds
+            },
+            'interviews': data
+        }
+    })
+    return uf.encode_dataframe(data_frame)

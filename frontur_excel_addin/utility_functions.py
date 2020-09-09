@@ -1,41 +1,42 @@
 import datetime
 import pandas as pd
+import frontur_utilities.constants as const
 
 
 def decode_dataframe(data_frame):
     if not data_frame.empty:
-        if 'Opera_desde' in data_frame:
-            data_frame['Opera_desde'] = data_frame.apply(lambda row:
-                decode_date(row['Opera_desde']), axis='columns')
-        if 'Opera_hasta' in data_frame:
-            data_frame['Opera_hasta'] = data_frame.apply(lambda row:
-                decode_date(row['Opera_hasta']), axis='columns')
-        if 'Hora_Salida' in data_frame:
-            data_frame['Hora_Salida'] = data_frame.apply(lambda row:
-                decode_time(row['Hora_Salida']), axis='columns')
-        if 'Day' in data_frame:
-                data_frame['Day'] = data_frame.apply(lambda row:
-                    decode_date(row['Day']), axis='columns')
+        if const.DF_OPERATION_START_COL_NAME in data_frame:
+            data_frame[const.DF_OPERATION_START_COL_NAME] = data_frame.apply(lambda row:
+                decode_date(row[const.DF_OPERATION_START_COL_NAME]), axis='columns')
+        if const.DF_OPERATION_END_COL_NAME in data_frame:
+            data_frame[const.DF_OPERATION_END_COL_NAME] = data_frame.apply(lambda row:
+                decode_date(row[const.DF_OPERATION_END_COL_NAME]), axis='columns')
+        if const.DF_EMBARK_HOUR in data_frame:
+            data_frame[const.DF_EMBARK_HOUR] = data_frame.apply(lambda row:
+                decode_time(row[const.DF_EMBARK_HOUR]), axis='columns')
+        if const.DF_DAY_COL_NAME in data_frame:
+                data_frame[const.DF_DAY_COL_NAME] = data_frame.apply(lambda row:
+                    decode_date(row[const.DF_DAY_COL_NAME]), axis='columns')
 
     return data_frame
 
 
 def encode_dataframe(data_frame):
     if not data_frame.empty:
-        if 'Opera_desde' in data_frame:
-            data_frame['Opera_desde'] = data_frame.apply(lambda row: 
+        if const.DF_OPERATION_START_COL_NAME in data_frame:
+            data_frame[const.DF_OPERATION_START_COL_NAME] = data_frame.apply(lambda row: 
                 # str(row['Opera_desde'].strftime('%d/%m/%Y')), 
-                row['Opera_desde'].isoformat(),
+                row[const.DF_OPERATION_START_COL_NAME].isoformat().split('T')[0],
                 axis='columns')
-        if 'Opera_hasta' in data_frame:
-            data_frame['Opera_hasta'] = data_frame.apply(lambda row:
-                row['Opera_hasta'].strftime('%d/%m/%Y'), axis='columns')   
-        if 'Hora_Salida' in data_frame:
-            data_frame['Hora_Salida'] = data_frame.apply(lambda row: 
-                str(row['Hora_Salida']).split(' ')[-1], axis='columns')
-        if 'Day' in data_frame:
-            data_frame['Day'] = data_frame.apply(lambda row: 
-                row['Day'].strftime('%d/%m/%Y'), axis='columns')
+        if const.DF_OPERATION_END_COL_NAME in data_frame:
+            data_frame[const.DF_OPERATION_END_COL_NAME] = data_frame.apply(lambda row:
+                row[const.DF_OPERATION_END_COL_NAME].strftime('%d/%m/%Y'), axis='columns')   
+        if const.DF_EMBARK_HOUR in data_frame:
+            data_frame[const.DF_EMBARK_HOUR] = data_frame.apply(lambda row: 
+                str(row[const.DF_EMBARK_HOUR]).split(' ')[-1], axis='columns')
+        if const.DF_DAY_COL_NAME in data_frame:
+            data_frame[const.DF_DAY_COL_NAME] = data_frame.apply(lambda row: 
+                row[const.DF_DAY_COL_NAME].strftime('%d/%m/%Y'), axis='columns')
 
     return data_frame
 
