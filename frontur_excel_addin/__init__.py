@@ -24,22 +24,6 @@ def sample():
 @xw.func
 @xw.arg('data_frame', pd.DataFrame, header=True, index=False, dates=datetime.datetime)
 @xw.ret(index=False, expand='table')
-def format_wk_days(data_frame):
-    """Elimina todos los espacios de la columna seleccionada"""
-    data_frame = uf.decode_dataframe(data_frame)
-
-    data_frame = df.extract_methods.format_dates(data_frame)
-    # df.extract_methods.substitute_values(data_frame, df.const.SUBSTITUTIONS_FILE_PATH)
-    data_frame = df.extract_methods.select_days(data_frame, df.const.DAYS_FILE_PATH)
-    data_frame[df.const.DF_PLANE_COL_NAME] = data_frame[df.const.DF_PLANE_COL_NAME].apply(lambda x: re.sub(r"\.\d+", '', str(x)))
-    data_frame = df.extract_methods.add_plane_data(data_frame, df.const.PLANES_DATA_FILE_PATH)
-
-    return uf.encode_dataframe(data_frame.sort_values(by=[df.const.DF_DAY_COL_NAME]))
-
-
-@xw.func
-@xw.arg('data_frame', pd.DataFrame, header=True, index=False, dates=datetime.datetime)
-@xw.ret(index=False, expand='table')
 def expand_date_intervals(data_frame):
     """Elimina todos los espacios de la columna seleccionada"""
     data_frame = uf.decode_dataframe(data_frame)
@@ -142,10 +126,8 @@ def assemble_cells(*cell_matrix):
 @xw.func(async_mode='threading')
 @xw.arg('data_frame', pd.DataFrame, header=True, index=False, dates=datetime.datetime)
 @xw.ret(index=False, expand='table')
-def solver(data_frame):
-    data_frame = uf.decode_dataframe(data_frame) 
-    with open(const.REQ_INTERVIEWS_FILE_PATH) as jfile:
-        data = json.load(jfile)
+def get_interviews(data_frame):
+    data_frame = uf.decode_dataframe(data_frame)
     data_frame = df_solver(data_frame, no_groups=True, parameters={
         'workday_time': pd.Timedelta(hours=8).seconds,
         'rest_time': pd.Timedelta(minutes=10).seconds,
@@ -156,7 +138,27 @@ def solver(data_frame):
                 'poll_success': 0.6,
                 'poll_time': pd.Timedelta(seconds=30).seconds
             },
-            'interviews': data
+            'interviews': {
+                "arrange": "Arrays",
+                "sample_as_percentage": False,
+                "passengers_by_stratum": [
+                    60,
+                    1000,
+                    10000,
+                    25000,
+                    40000,
+                    60000
+                ],
+                "minimum_sample": [
+                    20,
+                    80,
+                    200,
+                    400,
+                    500,
+                    600,
+                    700
+                ]
+            }
         }
     })
     return uf.encode_dataframe(data_frame)
